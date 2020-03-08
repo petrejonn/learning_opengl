@@ -22,6 +22,14 @@ void processInput(GLFWwindow *window);
     "   FragColor = vec4(0.0f, 0.5f, 0.2f, 0.2f);\n"
     "}\n";
 
+// create second fragment shader
+    const char *fragmentShaderSource2 = "#version 330 core\n"
+    "out vec4 FragColor;\n"
+    "void main()\n"
+    "{\n"
+    "   FragColor = vec4(0.0f, 0.5f, 0.5f, 0.2f);\n"
+    "}\n";
+
 int main(void)
 {
     GLFWwindow* window;
@@ -91,7 +99,13 @@ int main(void)
     glShaderSource(fragmentShader, 1, &fragmentShaderSource, NULL);
     glCompileShader(fragmentShader);
 
-    // link and delete shaders
+    // create and compile Second Fragment shader
+    GLuint fragmentShader2;
+    fragmentShader2 = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fragmentShader2, 1, &fragmentShaderSource2, NULL);
+    glCompileShader(fragmentShader2);
+
+    // link and delete first shaders
     GLuint shaderProgram;
     shaderProgram = glCreateProgram();
     glAttachShader(shaderProgram,vertexShader);
@@ -99,6 +113,15 @@ int main(void)
     glLinkProgram(shaderProgram);
     glDeleteShader(vertexShader);
     glDeleteShader(fragmentShader);
+
+    // link and delete second shaders
+    GLuint shaderProgram2;
+    shaderProgram2 = glCreateProgram();
+    glAttachShader(shaderProgram2,vertexShader);
+    glAttachShader(shaderProgram2,fragmentShader2);
+    glLinkProgram(shaderProgram2);
+    glDeleteShader(vertexShader);
+    glDeleteShader(fragmentShader2);
 
     // link vertex attributes
     glBindVertexArray(VAO1);
@@ -133,6 +156,7 @@ int main(void)
         glUseProgram(shaderProgram);
         glBindVertexArray(VAO1);
         glDrawArrays(GL_TRIANGLES, 0, 3);
+        glUseProgram(shaderProgram2);
         glBindVertexArray(VAO2);
         glDrawArrays(GL_TRIANGLES, 0, 3);
         // =====================================================
