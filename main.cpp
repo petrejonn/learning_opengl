@@ -53,11 +53,13 @@ int main(void)
 
     // =========================================================
     // create vertices
-    GLfloat vertices[]  = {
+    GLfloat triangle1[]  = {
         // triangle One
         -0.6f, 0.5f, 0.0f, // top
         -0.6f, -0.5f, 0.0f, // bottom left
         0.4f, -0.5f, 0.0f, // bottom right
+    };
+    GLfloat triangle2[]  = {
         // triangle Two
         -0.4f, 0.5f, 0.0f, // top left
         0.6f, 0.5f, 0.0f, // top right
@@ -65,12 +67,17 @@ int main(void)
     };
 
     // copy vertices to GPU
-    GLuint VAO, VBO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    GLuint VAO1, VBO1, VAO2, VBO2;
+    glGenVertexArrays(1, &VAO1);
+    glGenVertexArrays(1, &VAO2);
+    glGenBuffers(1, &VBO1);
+    glGenBuffers(1, &VBO2);
+    glBindVertexArray(VAO1);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle1), triangle1, GL_STATIC_DRAW);
+    glBindVertexArray(VAO2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(triangle2), triangle2, GL_STATIC_DRAW);
 
     // create and compile vetex shader
     GLuint vertexShader;
@@ -94,6 +101,14 @@ int main(void)
     glDeleteShader(fragmentShader);
 
     // link vertex attributes
+    glBindVertexArray(VAO1);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO1);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3*sizeof(float), (void *) 0);
+    glEnableVertexAttribArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindVertexArray(VAO2);
+    glBindBuffer(GL_ARRAY_BUFFER, VBO2);
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_TRUE, 3*sizeof(float), (void *) 0);
     glEnableVertexAttribArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -116,8 +131,10 @@ int main(void)
 
         // =====================================================
         glUseProgram(shaderProgram);
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindVertexArray(VAO1);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glBindVertexArray(VAO2);
+        glDrawArrays(GL_TRIANGLES, 0, 3);
         // =====================================================
        
         /* Swap front and back buffers */
